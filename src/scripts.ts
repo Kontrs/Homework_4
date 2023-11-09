@@ -1,4 +1,5 @@
 // import $, { get } from 'jquery';
+// import { type } from 'jquery';
 import sum from './utils/sum/sum';
 
 console.log('Ready for coding');
@@ -441,8 +442,8 @@ console.log(lastNthFromArray([1, 2, 3, 4, 5, 6, 7, 8], 3)); // = [6, 7, 8]
 // Write a function that takes an array (a) and a value (b) as argument
 // The function should clean a from all occurrences of b
 // Return the filtered array
-type inputAtype = (boolean | string | number)[]
-type inputBtype = boolean | string | number
+type inputAtype = (boolean | string | number)[];
+type inputBtype = boolean | string | number;
 
 const cleanArr = (inputA: inputAtype, inputB: inputBtype): inputAtype => {
   const filteredArr: inputAtype = inputA.filter((item) => item !== inputB);
@@ -556,7 +557,8 @@ console.log(sameElements(['10', 10, 10, 10])); // = false
 
 // Write a function that takes arguments an arbitrary number of arrays
 // It should return an array containing the values of all arrays
-type multiArrays = (string | number | boolean)[][]
+type multiArrays = (string | number | boolean)[][];
+
 const joinArrays = (...arrays: multiArrays): (string | number | boolean)[] => [].concat(...arrays);
 
 console.log(joinArrays([1, 2, 3], [4, 5, 6])); // = [1, 2, 3, 4, 5, 6]
@@ -569,6 +571,7 @@ console.log(joinArrays([true, true], [1, 2], ['a', 'b'])); // = [true, true, 1, 
 // Sort the array by property b in ascending order
 // Return the sorted array
 type someObject = { a: number, b: number};
+
 const sortByProperty = (inputA: someObject[]): someObject[] => inputA.sort((a, b) => a.b - b.b);
 
 console.log(sortByProperty([{ a: 1, b: 2 }, { a: 5, b: 4 }])); // = [{a:1,b:2},{a:5,b:4}]
@@ -781,6 +784,7 @@ console.log(differentObjectKey('b', 'w')); // = {b: 'w'}
 // Create an object that has properties with keys 'a' and corresponding values 'b'
 // Return the object
 type objectType = {[key: string | number]: string | number}
+
 const keyValue = (inputA: unknown[], inputB: unknown[]): objectType => {
   const result: {[key: string | number]: string | number} = {};
   for (let i = 0; i < inputA.length; i += 1) {
@@ -915,6 +919,25 @@ console.log(multiplyValue({ w: 15, x: 22, y: 13 }, 6)); // = {w:90,x:132,y:78}
 // Write a function that takes an object as argument
 // Somehow, the properties and keys of the object got mixed up
 // Swap the Javascript object's key with its values and return the resulting object
+type objectType2 = {[key: string | number]: string | number}
+
+const swapKey = (inputA: objectType2): objectType2 => {
+  const result: objectType2 = {};
+  for (const key in inputA) {
+    if (Object.prototype.hasOwnProperty.call(inputA, key)) {
+      result[inputA[key]] = key;
+    }
+  }
+  return result;
+};
+
+console.log(swapKey({
+  z: 'a', y: 'b', x: 'c', w: 'd',
+})); // = {a:'z',b:'y',c:'x',d:'w'}
+console.log(swapKey({
+  2: 'a', 4: 'b', 6: 'c', 8: 'd',
+})); // = {a:'2',b:'4',c:'6',d:'8'}
+console.log(swapKey({ a: 1, z: 24 })); // = {1:'a',24:'z'}
 
 // //Task 58
 
@@ -922,6 +945,27 @@ console.log(multiplyValue({ w: 15, x: 22, y: 13 }, 6)); // = {w:90,x:132,y:78}
 // Some of the property values contain empty strings
 // Replace empty strings and strings that contain only whitespace with null values
 // Return the resulting object
+
+type replaceEmptyValue = {[key: string]: string | null}
+
+const replaceEmpty = (inputA: replaceEmptyValue): replaceEmptyValue => {
+  const result: replaceEmptyValue = {};
+  for (const key in inputA) {
+    if (Object.prototype.hasOwnProperty.call(inputA, key)) {
+      const value = inputA[key].trim();
+      result[key] = value === '' ? null : value;
+    }
+  }
+  return result;
+};
+
+console.log(replaceEmpty({ a: 'a', b: 'b', c: '' })); // = { a: 'a', b: 'b', c: null }
+console.log(replaceEmpty({
+  a: '', b: 'b', c: ' ', d: 'd',
+})); // = { a: null, b: 'b', c: null, d: 'd' }
+console.log(replaceEmpty({
+  a: 'a', b: 'b ', c: ' ', d: '',
+})); // = { a: 'a', b: 'b ', c: null, d: null }
 
 // //Task 59
 
@@ -932,12 +976,55 @@ console.log(multiplyValue({ w: 15, x: 22, y: 13 }, 6)); // = {w:90,x:132,y:78}
 // Attach the unit kg to the weight
 // Return a new object with all available properties that we are interested in
 
+type personalData = {[key: string]: string | number}
+
+const extractPersonalData = (inputA: personalData): personalData => {
+  const result: personalData = {};
+  const keysToExtract: string[] = ['fn', 'ln', 'size', 'weight'];
+  for (const key of keysToExtract) {
+    if (Object.prototype.hasOwnProperty.call(inputA, key)) {
+      const value = inputA[key];
+      result[key] = typeof value === 'number' && (key === 'weight' || key === 'size')
+        ? `${value}${key === 'weight' ? 'kg' : 'cm'}`
+        : String(value);
+    }
+  }
+  return result;
+};
+
+console.log(extractPersonalData({
+  fn: 'Lisa', ln: 'Müller', age: 17, size: 175, weight: 67,
+})); // = {fn: 'Lisa', ln: 'Müller', size: '175cm', weight: '67kg'}
+console.log(extractPersonalData({
+  fn: 'Martin', ln: 'Harper', age: 26, email: 'martin.harper@test.de', weight: 102,
+})); // = {fn: 'Martin', ln: 'Harper', weight: '102kg'}
+console.log(extractPersonalData({
+  fn: 'Andrew', ln: 'Harper', age: 81, size: 175, weight: 71,
+})); // = {fn: 'Andrew', ln: 'Harper', size: '175cm', weight: '71kg'}
+console.log(extractPersonalData({
+  fn: 'Matthew', ln: 'Müller', age: 19, email: 'matthew@mueller.de',
+})); // = {fn: 'Matthew', ln: 'Müller'}
+
 // //Task 60
 
 // Write a function that takes an array of objects and a string as arguments
 // Add a property with key 'continent' and value equal to the string to each of the objects
 // Return the new array of objects
 // Tip: try not to mutate the original array
+type initialObject = { city: string, country: string }[]
+type alteredObject = { city: string, country: string, continent: string}[]
+
+const addCont = (
+  inputA: initialObject,
+  inputB: string,
+): alteredObject => inputA.map((item) => ({ ...item, continent: inputB }));
+
+console.log(addCont([{ city: 'Tokyo', country: 'Japan' }, { city: 'Bangkok', country: 'Thailand' }], 'Asia'));
+// = [{ city: 'Tokyo', country: 'Japan', continent: 'Asia' },
+// { city: 'Bangkok', country: 'Thailand', continent: 'Asia' }]
+console.log(addCont([{ city: 'Stockholm', country: 'Sweden' }, { city: 'Paris', country: 'France' }], 'Europe'));
+// [{ city: 'Stockholm', country: 'Sweden', continent: 'Europe' },
+// { city: 'Paris', country: 'France', continent: 'Europe' }]
 
 // //Task 61
 
@@ -946,16 +1033,44 @@ console.log(multiplyValue({ w: 15, x: 22, y: 13 }, 6)); // = {w:90,x:132,y:78}
 // It should have a key for each unique value of the array
 // The corresponding object value should be the number of times the key occurs within the array
 
+const newObject = (inputA: number[]): {[key:number]:number} => {
+  const initialValue: {[key: number]: number} = {};
+  inputA.reduce((acc, currValue) => {
+    acc[currValue] = (acc[currValue] || 0) + 1;
+    return acc;
+  }, initialValue);
+  return initialValue;
+};
+
+console.log(newObject([1, 2, 2, 3])); // = {1:1,2:2,3:1}
+console.log(newObject([9, 9, 9, 99])); // = {9:3,99:1}
+console.log(newObject([4, 3, 2, 1])); // = {1:1,2:1,3:1,4:1}
+
 // //Task 62
 
 // Write a function that takes two date instances as arguments
 // It should return true if the dates are equal
 // It should return false otherwise
 
+const equalDates = (inputA: Date, inputB: Date): boolean => inputA.getTime() === inputB.getTime();
+
+console.log(equalDates(new Date('2000/01/01 08:00:00'), new Date('2000/01/01 08:45:00'))); // = false
+console.log(equalDates(new Date('2000/01/01 08:00:00'), new Date('2000/01/01 08:00:00'))); // = true
+console.log(equalDates(new Date('2001/01/01 08:00:00'), new Date('2000/01/01 08:00:00'))); // = false
+
 // //Task 63
 
 // Write a function that takes two date instances as argument
 // It should return the number of days that lies between those dates
+
+const dayDifference = (inputA: Date, inputB: Date): number => {
+  const millisecondsPerDay = 24 * 60 * 60 * 1000;
+  const timeDifference = inputA.getTime() - inputB.getTime();
+  const dayDiff = Math.abs(Math.floor(timeDifference / millisecondsPerDay));
+  return dayDiff;
+};
+console.log(dayDifference(new Date('2020-06-11'), new Date('2020-06-01'))); // = 10
+console.log(dayDifference(new Date('2000-01-01'), new Date('2020-06-01'))); // = 7457
 
 // //Task 64
 
@@ -963,11 +1078,23 @@ console.log(multiplyValue({ w: 15, x: 22, y: 13 }, 6)); // = {w:90,x:132,y:78}
 // It should return true if they fall on the exact same day
 // It should return false otherwise
 
+const sameDay = (inputA: Date, inputB: Date): boolean => inputA.getTime() === inputB.getTime();
+
+console.log(sameDay(new Date('2000/01/01'), new Date('2000/01/01'))); // = true
+console.log(sameDay(new Date('2000/01/01'), new Date('2000/01/02'))); // = false
+console.log(sameDay(new Date('2001/01/01'), new Date('2000/01/01'))); // = false
+console.log(sameDay(new Date('2000/11/01'), new Date('2000/01/01'))); // = false
+
 // //Task 65 (Spread operators only)
 
 // Write a function that takes two number arrays as parameters
 // and return an array which contains elements from both
 // arrays
+
+const mergeArr = (...array: (number |number[])[]): number[] => [].concat(...array);
+
+console.log(mergeArr([1, 2], [3, 4])); // = [1, 2, 3, 4]
+console.log(mergeArr([1, 2], [3, 4, 5, 6])); // = [1, 2, 3, 4, 5, 6]
 
 // //Task 66
 
@@ -975,11 +1102,38 @@ console.log(multiplyValue({ w: 15, x: 22, y: 13 }, 6)); // = {w:90,x:132,y:78}
 // and return an array which contains all elements from the given array
 // and the given string as the last element
 
+const addFruit = (...items: (string | string[])[]): (string | string[])[] => {
+  const result: (string | string[])[] = [];
+  items.forEach((item) => {
+    if (Array.isArray(item)) {
+      result.push(...item);
+    } else {
+      result.push(item);
+    }
+  });
+  return result;
+};
+
+console.log(addFruit(['Apple', 'Orange', 'Banana'], 'Kiwi')); // = ['Apple', 'Orange', 'Banana', 'Kiwi']
 // //Task 67
 
 // Write a function that takes an array and a string as parameters
 // and return an array which contains all elements from the given array
 // and the given string as the first element
+
+const addFruitAtStart = (...items: (string | string[])[]): (string | string[])[] => {
+  const result: (string | string[])[] = [];
+  items.forEach((item) => {
+    if (Array.isArray(item)) {
+      result.unshift(...item);
+    } else {
+      result.unshift(item);
+    }
+  });
+  return result;
+};
+
+console.log(addFruitAtStart(['Apple', 'Orange', 'Banana'], 'Kiwi')); // = ['Kiwi', 'Apple', 'Orange', 'Banana']
 
 // //Task 68
 
@@ -987,8 +1141,38 @@ console.log(multiplyValue({ w: 15, x: 22, y: 13 }, 6)); // = {w:90,x:132,y:78}
 // and return an object which contains properties from both
 // objects
 
+const mergeObj = (...objects: {[key: string]: number}[]): {[key: string]: number} => objects.reduce(
+  (merged, obj) => ({ ...merged, ...obj }),
+  {},
+);
+
+console.log(mergeObj({ a: 1, b: 2 }, { c: 3, d: 4 })); // = { a:1, b:2, c:3, d:4 }
+console.log(mergeObj({ a: 1, b: 2 }, {
+  c: 3, d: 4, e: 5, f: 6,
+})); // = { a:1, b:2, c:3, d:4, e:5, f:6 }
+
 // //Task 69
 
 // Write a function that takes an object and a string as parameters
 // and return an object which contains properties from the given object
 // and a new property favoriteMovie with the value equal to the given string
+type favMovieType = {[key:string]: number | string}
+
+const favMovie = (...items: (favMovieType | string)[]): favMovieType => {
+  const result: favMovieType = {};
+  items.forEach((item) => {
+    if (typeof item === 'string') {
+      result.favoriteMovie = item;
+    } else {
+      Object.keys(item).forEach((key) => {
+        if (typeof item[key] === 'string' || typeof item[key] === 'number') {
+          result[key] = item[key];
+        }
+      });
+    }
+  });
+  return result;
+};
+
+console.log(favMovie({ eyeColor: 'green', age: 10 }, 'Garfield')); // = { eyeColor: 'green', age: 10, favoriteMovie:  'Garfield' }
+console.log(favMovie({ eyeColor: 'blue', age: 15 }, 'Twilight')); // = { eyeColor: 'blue', age: 15, favoriteMovie:  'Twilight' }
